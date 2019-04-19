@@ -1,0 +1,11 @@
+PORT: "11111"
+DATABASE:
+    ENGINE: "postgres"
+    USER: "devx"
+    PASSWORD: "admin"
+    DBNAME: "govdev"
+    PORT: "5432"
+    HOST: "localhost"
+    SSLMODE: "disable"
+DEBUG: true
+HIDEBANNER: true
