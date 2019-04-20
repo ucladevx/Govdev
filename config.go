@@ -8,9 +8,10 @@ import (
 
 type Config struct {
 	Port       string
-	Database   DatabaseConfig
 	Debug      bool
 	Hidebanner bool
+	Database   DatabaseConfig
+	Cache      CacheConfig
 }
 
 type DatabaseConfig struct {
@@ -20,6 +21,15 @@ type DatabaseConfig struct {
 	DBName   string
 	Port     string
 	SSLMode  string
+	Host     string
+}
+
+type CacheConfig struct {
+	Engine   string
+	Host     string
+	Port     string
+	Password string
+	DBName   int
 }
 
 func LoadConfig() (Config, []error) {

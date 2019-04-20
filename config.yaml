@@ -1,4 +1,6 @@
 PORT: "11111"
+DEBUG: true
+HIDEBANNER: true
 DATABASE:
     ENGINE: "postgres"
     USER: "devx"
@@ -7,5 +9,9 @@ DATABASE:
     PORT: "5432"
     HOST: "localhost"
     SSLMODE: "disable"
-DEBUG: true
-HIDEBANNER: true
+CACHE:
+    ENGINE: "redis"
+    HOST: "localhost"
+    PORT: "6379"
+    DBNAME: 0
+    PASSWORD: ""
