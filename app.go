@@ -8,8 +8,10 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	http_controllers "github.com/ucladevx/govdev/adapters/http"
+	"github.com/ucladevx/govdev/services"
 	"github.com/ucladevx/govdev/stores/postgresql"
 	"github.com/ucladevx/govdev/stores/redis"
 )
@@ -39,21 +41,15 @@ func Start(conf Config) {
 		userStore,
 	)
 
-	app := echo.New()
-	app.HideBanner = true
-	app.Debug = conf.Debug
+	cacheStore := redis.NewRedisStore(r)
 
-	app.Use(middleware.Gzip())
-	app.Use(middleware.Secure())
-	app.Use(middleware.RemoveTrailingSlash())
-	app.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: `${time_rfc3339_nano} ${method} {id":"${id}","remote_ip":"${remote_ip}",` +
-			`"uri":"${uri}","status":${status},"latency":${latency},` +
-			`"latency_human":"${latency_human}","bytes_in":${bytes_in},` +
-			`"bytes_out":${bytes_out}}` + "\n",
-	}))
+	cacheService := services.NewCacheService(cacheStore)
 
+	userController := http_controllers.NewUserController(cacheService)
+
+	app := initServer(conf)
 	app.GET("/", hello)
+	userController.Mount(app.Group("/user"))
 
 	go func() {
 		app.Logger.Fatal(app.Start(":" + conf.Port))
@@ -70,6 +66,24 @@ func Start(conf Config) {
 		app.Logger.Fatal(err)
 	}
 	fmt.Println("Shutdown govdev server. Goodbye.")
+}
+
+func initServer(conf Config) *echo.Echo {
+	app := echo.New()
+	app.HideBanner = true
+	app.Debug = conf.Debug
+
+	app.Use(middleware.Gzip())
+	app.Use(middleware.Secure())
+	app.Use(middleware.RemoveTrailingSlash())
+	app.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: `${time_rfc3339_nano} ${method} {id":"${id}","remote_ip":"${remote_ip}",` +
+			`"uri":"${uri}","status":${status},"latency":${latency},` +
+			`"latency_human":"${latency_human}","bytes_in":${bytes_in},` +
+			`"bytes_out":${bytes_out}}` + "\n",
+	}))
+
+	return app
 }
 
 func hello(c echo.Context) error {
