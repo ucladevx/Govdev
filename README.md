@@ -3,6 +3,10 @@
 A highly configurable and scalable backend for managing user services.
 Originally built to serve UCLA DevX's application portal needs
 
+- [Govdev](#govdev)
+  * [Requirements Specification and Architecture](#requirements-specification-and-architecture)
+  * [License](#license)
+
 ## Requirements Specification and Architecture
 
 The [software requirements specification](SRS.md) details in non-technical terms

@@ -8,8 +8,8 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/labstack/echo/middleware"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 	http_controllers "github.com/ucladevx/govdev/adapters/http"
 	"github.com/ucladevx/govdev/services"
 	"github.com/ucladevx/govdev/stores/postgresql"
