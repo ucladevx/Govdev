@@ -148,29 +148,102 @@ the outputs, without affecting other parts of our codebase.
 
 ### Users
 
+    - ID -- 20 VARCHAR, PRIMARY KEY
+    - Email -- 512 VARCHAR, UNIQUE
+    - Username -- 128 VARCHAR
+    - Password -- 256 VARCHAR
+    - FirstName -- 128 VARCHAR
+    - LastName -- 128 VARCHAR
+    - ProfileImage -- VARCHAR 1024
+    
+    // Meta Data
+    - CreatedAt -- timestamptz DEFAULT NOW()
+    - DeletedAt -- timestamptz DEFAULT NOW()
+
+A user represents a user stored in by the system.
+
 ### Roles
+
+    - ID -- 20 VARCHAR, PRIMARY KEY
+    - Permission -- Integer
+    - UserID -- 20 VARCHAR, FOREIGN KEY REFERENCES USER(ID)
+
+A list of possible permissions:
+
+    - USER
+    - ADMIN
+    - OWNER
 
 ### Applications
 
+    - ID -- 20 VARCHAR, PRIMARY KEY
+    - UserID -- 20 VARCHAR, FOREIGN KEY REFERENCES User(ID)
+    - Year -- Integer
+    - Quarter -- {FALL, WINTER, SPRING}
+    - GradeLevel -- {FRESHMEN, SOPHOMORE, JUNIOR, SENIOR, SUPER SENIOR}
+    - Gender -- {MALE, FEMALE}
+    - Ethnicity -- {List of popular ethincities}
+    - Major -- VARCHAR 128
+    - Position -- VARCHAR 128
+    - Resume -- VARCHAR 1024
+
 ### Scores
+
+    - ID -- 20 VARCHAR, PRIMARY KEY
+    - ApplicationID -- 20 VARCHAR, FOREIGN KEY REFERENCES Application(ID)
+    - Score -- Integer
+
+A score allows an admin to score an application, typically out of 5.
 
 ### Teams
 
+TODO
+
 ## Relationships
 
-### Users and Applications
-
-### Users and Roles
-
-### Applications and Scores
-
-### Users and teams
 
 ## Authentication and Roles
 
+Email/Password based login. Signing up requires email verification.
+
 ### Sessions
 
+```
+Name: "govdev_remember_token"
+Value: remember_token
+HTTPOnly: true
+```
+
+```
+Name: "govdev_refresh_token"
+Value: refresh_token
+HTTPOnly: true
+```
+
+Cookies are used to store a user session. We store one cookie, that has a
+randomly generated `remember_token`. Each `remember_token` is a reference that
+points to the `UserId` of the signed-in user in a cache table.
+
+The advantages of this method is that the remember token is meaningless to the
+normal user. Someone trying to read the cookies will only see a random string. 
+Moreover, all the data necessary for login exists in the cache, and so this
+cache will allow us to invalidate the entry in the cache when the user wants to
+be signed out, and has enough entropy that the session does not last forever.
+
+We also store a refresh token in a second cookie that allows the client can
+store, and when the original remember token times out, and the user would be
+logged out, they can submit the refresh token and automatically re-log in. The
+refresh token is also stored in the cache.
+
 ### Permissions 
+
+- USER: Users can create a new account, edit their information, and delete the
+  account when needed. Additionally, user permissions allow them to submit
+  applications.
+- ADMIN: Admins can read other people's profiles, make changes as needed, and
+  review applications. ADMIN access is required to get into admin pages.
+- OWNER: Owners are allowed to create admins and promote admins to owners.
+  Owners can demote other owners to admin.
 
 ## External HTTP API
 

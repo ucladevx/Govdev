@@ -3,13 +3,12 @@ package govdev
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
 	"time"
 
-	"github.com/labstack/echo/middleware"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	http_controllers "github.com/ucladevx/govdev/adapters/http"
 	"github.com/ucladevx/govdev/services"
 	"github.com/ucladevx/govdev/stores/postgresql"
@@ -45,10 +44,11 @@ func Start(conf Config) {
 
 	cacheService := services.NewCacheService(cacheStore)
 
+	pagesController := http_controllers.NewPagesController()
 	userController := http_controllers.NewUserController(cacheService)
 
 	app := initServer(conf)
-	app.GET("/", hello)
+	pagesController.Mount(app.Group(""))
 	userController.Mount(app.Group("/user"))
 
 	go func() {
@@ -84,10 +84,6 @@ func initServer(conf Config) *echo.Echo {
 	}))
 
 	return app
-}
-
-func hello(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
 }
 
 // Function denotes that this error must not exist

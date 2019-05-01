@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/go-redis/redis/v6"
+	"github.com/go-redis/redis"
 )
 
 func NewConnection(host, port, password string, db int) *redis.Client {
