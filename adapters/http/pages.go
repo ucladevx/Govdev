@@ -14,6 +14,7 @@ func NewPagesController() *PagesController {
 
 func (pc *PagesController) Mount(g *echo.Group) {
 	g.GET("/hello", pc.hello)
+	// g.GET("/version", pc.version)
 }
 
 func (pc *PagesController) hello(c echo.Context) error {

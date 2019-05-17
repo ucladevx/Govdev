@@ -9,7 +9,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	http_controllers "github.com/ucladevx/govdev/adapters/http"
+	"github.com/ucladevx/govdev/adapters/http"
 	"github.com/ucladevx/govdev/services"
 	"github.com/ucladevx/govdev/stores/postgresql"
 	"github.com/ucladevx/govdev/stores/redis"
@@ -44,8 +44,8 @@ func Start(conf Config) {
 
 	cacheService := services.NewCacheService(cacheStore)
 
-	pagesController := http_controllers.NewPagesController()
-	userController := http_controllers.NewUserController(cacheService)
+	pagesController := http.NewPagesController()
+	userController := http.NewUserController(cacheService)
 
 	app := initServer(conf)
 	pagesController.Mount(app.Group(""))
@@ -55,6 +55,7 @@ func Start(conf Config) {
 		app.Logger.Fatal(app.Start(":" + conf.Port))
 	}()
 
+	// Graceful shutdown
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	signal.Notify(quit, os.Kill)
