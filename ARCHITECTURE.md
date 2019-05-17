@@ -146,6 +146,11 @@ the outputs, without affecting other parts of our codebase.
 
 ## Entities and Relationships
 
+According to [PostgreSQL guidelines](https://wiki.postgresql.org/wiki/Don%27t_Do_This),
+we shouldn't use `varchar(n)` over `text` fields, because there is no performace
+benefit, and having a check constraint is easier to change than a column
+migration later on if necessary.
+
 ### Users
 
     - ID -- 20 VARCHAR, PRIMARY KEY
@@ -158,7 +163,8 @@ the outputs, without affecting other parts of our codebase.
     
     // Meta Data
     - CreatedAt -- timestamptz DEFAULT NOW()
-    - DeletedAt -- timestamptz DEFAULT NOW()
+    - UpdatedAt -- timestamptz DEFAULT NOW()
+    - DeletedAt -- timestamptz
 
 A user represents a user stored in by the system.
 
@@ -167,6 +173,12 @@ A user represents a user stored in by the system.
     - ID -- 20 VARCHAR, PRIMARY KEY
     - Permission -- Integer
     - UserID -- 20 VARCHAR, FOREIGN KEY REFERENCES USER(ID)
+
+    // Meta Data
+    - CreatedAt -- timestamptz DEFAULT NOW()
+    - UpdatedAt -- timestamptz DEFAULT NOW()
+    - DeletedAt -- timestamptz 
+
 
 A list of possible permissions:
 
@@ -187,17 +199,30 @@ A list of possible permissions:
     - Position -- VARCHAR 128
     - Resume -- VARCHAR 1024
 
+    // Meta Data
+    - CreatedAt -- timestamptz DEFAULT NOW()
+    - UpdatedAt -- timestamptz DEFAULT NOW()
+    - DeletedAt -- timestamptz 
+
 ### Scores
 
     - ID -- 20 VARCHAR, PRIMARY KEY
     - ApplicationID -- 20 VARCHAR, FOREIGN KEY REFERENCES Application(ID)
     - Score -- Integer
 
+    // Meta Data
+    - CreatedAt -- timestamptz DEFAULT NOW()
+    - UpdatedAt -- timestamptz DEFAULT NOW()
+    - DeletedAt -- timestamptz
+
 A score allows an admin to score an application, typically out of 5.
 
 ### Teams
 
-TODO
+    - ID -- text, PRIMARY KEY
+    - Name -- text
+    - Description -- text
+    - ProfileImage -- text
 
 ## Relationships
 
@@ -254,3 +279,5 @@ This section defines the external facing API.
 ### Error Handling
 
 ### Logging
+
+### Health Checks
