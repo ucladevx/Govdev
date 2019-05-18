@@ -1,6 +1,6 @@
 PORT: "11111"
 DEBUG: true
-HIDEBANNER: true
+HIDEBANNER: false
 DATABASE:
     ENGINE: "postgres"
     USER: "devx"

@@ -10,6 +10,13 @@ import (
 )
 
 const (
+	logo = `
+_________            ________             
+__  ____/________   ____  __ \_______   __
+_  / __ _  __ \_ | / /_  / / /  _ \_ | / /
+/ /_/ / / /_/ /_ |/ /_  /_/ //  __/_ |/ / 
+\____/  \____/_____/ /_____/ \___/_____/  
+`
 	GOARCH string = runtime.GOARCH // Architecture running on
 	GOOS   string = runtime.GOOS   // Operating system running on
 )
@@ -52,6 +59,10 @@ func serve(c *cobra.Command, args []string) {
 		version()
 	}
 	conf, _ := govdev.LoadConfig()
+
+	if !conf.Hidebanner {
+		fmt.Println(logo)
+	}
 
 	govdev.Start(conf)
 }
