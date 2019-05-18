@@ -2,18 +2,29 @@ package minio
 
 import (
 	"io"
+	"time"
 
 	minio "github.com/minio/minio-go"
 )
 
+// MinioObjectStore wraps a Minio Client
 type MinioObjectStore struct {
 	client *minio.Client
 }
 
+// MinioBucket stores the name and location of a bucket
 type MinioBucket struct {
 	store    *minio.Client
 	name     string
 	location string
+}
+
+// MinioObjectInfo wraps minio.ObjectInfo{}
+type MinioObjectInfo struct {
+	lastModified time.Time
+	eTag         string
+	contentType  string
+	size         int64
 }
 
 func NewMinioObjStore(client *minio.Client) *MinioObjectStore {
@@ -59,7 +70,7 @@ func (mos *MinioObjectStore) DestroyBucket(name, location string) error {
 	return nil
 }
 
-func (mb *MinioBucket) Get(name string) (*minio.Object, error) {
+func (mb *MinioBucket) Get(name string) (io.Reader, error) {
 	obj, err := mb.store.GetObject(mb.name, name, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
@@ -67,15 +78,15 @@ func (mb *MinioBucket) Get(name string) (*minio.Object, error) {
 	return obj, nil
 }
 
-func (mb *MinioBucket) Stat(name string) (*minio.ObjectInfo, error) {
+func (mb *MinioBucket) Stat(name string) (*MinioObjectInfo, error) {
 	stats, err := mb.store.StatObject(mb.name, name, minio.StatObjectOptions{})
 	if err != nil {
 		return nil, err
 	}
-	return &stats, nil
+	return New(&stats), nil
 }
 
-func (mb *MinioBucket) GetStat(name string) (*minio.Object, *minio.ObjectInfo, error) {
+func (mb *MinioBucket) GetStat(name string) (io.Reader, *MinioObjectInfo, error) {
 	obj, err := mb.Get(name)
 	if err != nil {
 		return nil, nil, err
@@ -104,4 +115,29 @@ func (mb *MinioBucket) Remove(name string) error {
 		return err
 	}
 	return nil
+}
+
+func New(mio *minio.ObjectInfo) *MinioObjectInfo {
+	return &MinioObjectInfo{
+		lastModified: mio.LastModified,
+		eTag:         mio.ETag,
+		contentType:  mio.ContentType,
+		size:         mio.Size,
+	}
+}
+
+func (oi *MinioObjectInfo) LastModified() time.Time {
+	return oi.lastModified
+}
+
+func (oi *MinioObjectInfo) ETag() string {
+	return oi.eTag
+}
+
+func (oi *MinioObjectInfo) ContentType() string {
+	return oi.contentType
+}
+
+func (oi *MinioObjectInfo) Size() int64 {
+	return oi.size
 }
