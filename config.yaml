@@ -15,3 +15,9 @@ CACHE:
     PORT: "6379"
     DBNAME: 0
     PASSWORD: ""
+OBJECTSTORE: 
+    HOST: "localhost"
+    PORT: "9000"
+    ACCESSKEYID: "admin"
+    SECRETACCESSKEY: "adminsecret"
+    USESSL: false

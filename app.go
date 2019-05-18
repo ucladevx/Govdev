@@ -40,7 +40,7 @@ func Start(conf Config) {
 		userStore,
 	)
 
-	cacheStore := redis.NewRedisStore(r)
+	cacheStore := redis.NewRedisCache(r)
 
 	cacheService := services.NewCacheService(cacheStore)
 

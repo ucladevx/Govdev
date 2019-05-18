@@ -7,11 +7,12 @@ import (
 )
 
 type Config struct {
-	Port       string
-	Debug      bool
-	Hidebanner bool
-	Database   DatabaseConfig
-	Cache      CacheConfig
+	Port        string
+	Debug       bool
+	Hidebanner  bool
+	Database    DatabaseConfig
+	Cache       CacheConfig
+	ObjectStore MinioConfig
 }
 
 type DatabaseConfig struct {
@@ -30,6 +31,14 @@ type CacheConfig struct {
 	Port     string
 	Password string
 	DBName   int
+}
+
+type MinioConfig struct {
+	Host            string
+	Port            string
+	AccessKeyID     string
+	SecretAccessKey string
+	UseSSL          bool
 }
 
 func LoadConfig() (Config, []error) {
