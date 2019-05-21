@@ -2,6 +2,8 @@ package redis
 
 import "github.com/go-redis/redis"
 
+// RedisPubSub implements the PublishSubscribe interface, but publishes to all
+// subscribers. All subscribers will receive the message.
 type RedisPubSub struct {
 	client *redis.Client
 }
